@@ -20,6 +20,8 @@ public partial class MainPageViewModel : ObservableObject
     [ObservableProperty]
     private string _micIcon = "blue_mic.png";
 
+    private DateTime _recordingStartTime;
+
 
     public MainPageViewModel(AudioService audio, WhisperService whisper)
     {
@@ -43,7 +45,23 @@ public partial class MainPageViewModel : ObservableObject
             IsRecording = true;
             MicIcon = "red_mic.png";
             TranscribedText = "Listening...";
+            _recordingStartTime = DateTime.Now;
             await _audio.StartRecordingAsync();
+            return;
+        }
+
+        // Check minimum recording duration
+        var recordingDuration = DateTime.Now - _recordingStartTime;
+        if (recordingDuration.TotalSeconds < 2)
+        {
+            TranscribedText = "Please record for at least 2 seconds";
+            try
+            {
+                await _audio.StopRecordingAsync();
+            }
+            catch { }
+            IsRecording = false;
+            MicIcon = "blue_mic.png";
             return;
         }
 
@@ -52,10 +70,28 @@ public partial class MainPageViewModel : ObservableObject
         MicIcon = "blue_mic.png";
         TranscribedText = "Transcribing...";
 
-        var audioStream = await _audio.StopRecordingAsync();
-        var text = await _whisper.TranscribeAsync(audioStream);
+        try
+        {
+            var audioStream = await _audio.StopRecordingAsync();
 
-        TranscribedText = text;
+            if (audioStream == null || audioStream.Length == 0)
+            {
+                TranscribedText = "No audio recorded. Please try again.";
+                audioStream?.Dispose();
+                return;
+            }
+
+            var text = await _whisper.TranscribeAsync(audioStream);
+
+            // Dispose the stream after transcription
+            audioStream.Dispose();
+
+            TranscribedText = string.IsNullOrWhiteSpace(text) ? "No speech detected" : text;
+        }
+        catch (Exception ex)
+        {
+            TranscribedText = $"Error: {ex.Message}";
+        }
     }
 
 }

@@ -14,15 +14,30 @@ public class WhisperService
 
     public async Task<string> TranscribeAsync(Stream audioStream)
     {
-        var processor = _factory.CreateBuilder()
-            .WithLanguage("en")
-            .Build();
+        try
+        {
+            // Ensure stream is at the beginning
+            if (audioStream.CanSeek)
+                audioStream.Position = 0;
 
-        string result = "";
+            var processor = _factory.CreateBuilder()
+                .WithLanguage("en")
+                .Build();
 
-        await foreach (var segment in processor.ProcessAsync(audioStream))
-            result += segment.Text;
+            string result = "";
 
-        return result;
+            await foreach (var segment in processor.ProcessAsync(audioStream))
+                result += segment.Text;
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            // Add stream info to exception
+            ex.Data["StreamLength"] = audioStream.Length;
+            ex.Data["StreamPosition"] = audioStream.Position;
+            ex.Data["CanSeek"] = audioStream.CanSeek;
+            throw;
+        }
     }
 }
