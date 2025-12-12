@@ -5,6 +5,14 @@
        xmlns:views="clr-namespace:TalkBack.Views"
        FlyoutBehavior="Disabled"
        Title="TalkBack">
-    <ShellContent ContentTemplate="{DataTemplate views:MainPage}"
-                  Route="MainPage" />
+    <TabBar>
+        <ShellContent Title="Record"
+                      Icon="folder.png"
+                      ContentTemplate="{DataTemplate views:MainPage}"
+                      Route="MainPage" />
+        <ShellContent Title="Recordings"
+                      Icon="recordings.png"
+                      ContentTemplate="{DataTemplate views:RecordingsPage}"
+                      Route="RecordingsPage" />
+    </TabBar>
 </Shell>

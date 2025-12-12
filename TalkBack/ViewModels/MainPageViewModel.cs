@@ -10,6 +10,7 @@ public partial class MainPageViewModel : ObservableObject
 
     private readonly AudioService _audio;
     private readonly WhisperService _whisper;
+    private readonly RecordingService _recordingService;
 
 
     [ObservableProperty]
@@ -22,11 +23,15 @@ public partial class MainPageViewModel : ObservableObject
 
     private DateTime _recordingStartTime;
 
+    // 30 minutes max
+    private const int MaxRecordingSeconds = 30 * 60;
 
-    public MainPageViewModel(AudioService audio, WhisperService whisper)
+
+    public MainPageViewModel(AudioService audio, WhisperService whisper, RecordingService recordingService)
     {
         _audio = audio;
         _whisper = whisper;
+        _recordingService = recordingService;
     }
 
     [RelayCommand]
@@ -81,17 +86,30 @@ public partial class MainPageViewModel : ObservableObject
                 return;
             }
 
+            // Save the recording first
+            var duration = _audio.GetRecordingDuration();
+            var recording = await _recordingService.SaveRecordingAsync(audioStream, duration);
+
+            TranscribedText = "Recording saved! Transcribing...";
+
+            // Reset stream for transcription
+            audioStream.Position = 0;
             var text = await _whisper.TranscribeAsync(audioStream);
+
+            // Save transcription
+            await _recordingService.UpdateTranscriptionAsync(recording.Id, text);
 
             // Dispose the stream after transcription
             audioStream.Dispose();
 
-            TranscribedText = string.IsNullOrWhiteSpace(text) ? "No speech detected" : text;
+            TranscribedText = string.IsNullOrWhiteSpace(text) ? "Recording saved. No speech detected." : $"Recording saved!\n\n{text}";
         }
         catch (Exception ex)
         {
             TranscribedText = $"Error: {ex.Message}";
         }
     }
+
+
 
 }

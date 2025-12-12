@@ -5,7 +5,8 @@
              x:Class="TalkBack.Views.MainPage">
     <ScrollView>
         <VerticalStackLayout Padding="30"
-                             Spacing="25">
+                             Spacing="25"
+                             VerticalOptions="Center">
             <Label Text="{Binding TranscribedText}"
                    FontSize="20"
                    HorizontalOptions="Center" />

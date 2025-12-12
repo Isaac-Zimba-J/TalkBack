@@ -9,16 +9,23 @@ public class AudioService
     private readonly IAudioManager _audioManager;
     private IAudioStreamer? _streamer;
     private List<byte> _audioData = new();
+    private DateTime _recordingStartTime;
 
     public AudioService(IAudioManager audioManager)
     {
         _audioManager = audioManager;
     }
 
+    public TimeSpan GetRecordingDuration()
+    {
+        return DateTime.Now - _recordingStartTime;
+    }
+
     public async Task StartRecordingAsync()
     {
         // Clear previous recording data
         _audioData.Clear();
+        _recordingStartTime = DateTime.Now;
 
         // Create a new streamer for raw PCM audio capture
         _streamer = _audioManager.CreateStreamer();

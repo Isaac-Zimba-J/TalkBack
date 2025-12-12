@@ -4,6 +4,7 @@ using Syncfusion.Maui.Toolkit.Hosting;
 using TalkBack.Services;
 using TalkBack.ViewModels;
 using TalkBack.Views;
+using DotNet.Meteor.HotReload.Plugin;
 
 namespace TalkBack;
 
@@ -15,6 +16,9 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.ConfigureSyncfusionToolkit()
+#if DEBUG
+			.EnableHotReload()
+#endif
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -25,9 +29,11 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
+
 		builder.Services.AddSingleton(AudioManager.Current);
 
 		builder.Services.AddSingleton<AudioService>();
+		builder.Services.AddSingleton<RecordingService>();
 
 
 
@@ -49,7 +55,9 @@ public static class MauiProgram
 
 
 		builder.Services.AddSingleton<MainPageViewModel>();
+		builder.Services.AddSingleton<RecordingsPageViewModel>();
 		builder.Services.AddSingleton<MainPage>();
+		builder.Services.AddSingleton<RecordingsPage>();
 
 		return builder.Build();
 	}

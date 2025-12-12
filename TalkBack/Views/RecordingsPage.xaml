@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:TalkBack.ViewModels"
+             xmlns:models="clr-namespace:TalkBack.Models"
+             x:Class="TalkBack.Views.RecordingsPage"
+             x:DataType="viewModel:RecordingsPageViewModel"
+             Title="Recordings">
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0"
+                             Padding="20,10"
+                             BackgroundColor="{StaticResource Primary}">
+            <Label Text="My Recordings"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Start" />
+            <Label Text="{Binding Recordings.Count, StringFormat='{0} recordings'}"
+                   FontSize="14"
+                   TextColor="White"
+                   HorizontalOptions="Start" />
+        </VerticalStackLayout>
+        <!-- Recordings List -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Recordings}"
+                        SelectionMode="None"
+                        Margin="10">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="10">
+                    <Label Text="📝"
+                           FontSize="60"
+                           HorizontalOptions="Center" />
+                    <Label Text="No recordings yet"
+                           FontSize="18"
+                           HorizontalOptions="Center" />
+                    <Label Text="Go back and record something!"
+                           FontSize="14"
+                           TextColor="Gray"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:AudioRecording">
+                    <Frame Padding="15"
+                           Margin="5,8"
+                           BackgroundColor="White"
+                           CornerRadius="12"
+                           HasShadow="True">
+                        <Grid ColumnDefinitions="*,Auto"
+                              RowDefinitions="Auto,Auto,Auto,Auto"
+                              ColumnSpacing="10"
+                              RowSpacing="5">
+                            <!-- Title -->
+                            <Label Grid.Row="0"
+                                   Grid.Column="0"
+                                   Text="{Binding Title}"
+                                   FontSize="18"
+                                   FontAttributes="Bold" />
+                            <!-- Date -->
+                            <Label Grid.Row="1"
+                                   Grid.Column="0"
+                                   Text="{Binding RecordedAt, StringFormat='{0:MMM dd, yyyy h:mm tt}'}"
+                                   FontSize="12"
+                                   TextColor="Gray" />
+                            <!-- Duration -->
+                            <Label Grid.Row="2"
+                                   Grid.Column="0"
+                                   Text="{Binding Duration, StringFormat='Duration: {0:mm\\:ss}'}"
+                                   FontSize="12"
+                                   TextColor="Gray" />
+                            <!-- Transcription Preview -->
+                            <Label Grid.Row="3"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="2"
+                                   Text="{Binding Transcription}"
+                                   FontSize="12"
+                                   TextColor="DarkGray"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="2"
+                                   Margin="0,5,0,0"
+                                   IsVisible="{Binding Transcription, Converter={StaticResource IsNotNullConverter}}" />
+                            <!-- Action Buttons -->
+                            <HorizontalStackLayout Grid.Row="0"
+                                                   Grid.RowSpan="3"
+                                                   Grid.Column="1"
+                                                   VerticalOptions="Center"
+                                                   Spacing="10">
+                                <!-- Play/Pause Button -->
+                                <Button Text="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=IsPlaying, Converter={StaticResource PlayPauseIconConverter}, ConverterParameter={Binding Id}}"
+                                        WidthRequest="35"
+                                        HeightRequest="35"
+                                        FontSize="18"
+                                        Padding="0"
+                                        CornerRadius="17"
+                                        TextColor="White"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=PlayRecordingCommand}"
+                                        CommandParameter="{Binding .}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                     Binding="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=CurrentlyPlayingId}"
+                                                     Value="{Binding Id}">
+                                            <DataTrigger.Setters>
+                                                <Setter Property="Text"
+                                                        Value="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=IsPlaying, Converter={StaticResource PlayPauseIconConverter}}" />
+                                            </DataTrigger.Setters>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                                <!-- Delete Button -->
+                                <Button Text="🗑️"
+                                        WidthRequest="35"
+                                        HeightRequest="35"
+                                        FontSize="18"
+                                        Padding="0"
+                                        CornerRadius="17"
+                                        TextColor="White"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=DeleteRecordingCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
