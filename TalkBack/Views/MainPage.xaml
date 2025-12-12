@@ -2,19 +2,61 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModel="clr-namespace:TalkBack.ViewModels"
-             x:Class="TalkBack.Views.MainPage">
+             x:Class="TalkBack.Views.MainPage"
+             x:DataType="viewModel:MainPageViewModel">
     <ScrollView>
         <VerticalStackLayout Padding="30"
                              Spacing="25"
                              VerticalOptions="Center">
+            <!-- Recording Timer (only visible when recording) -->
+            <Border IsVisible="{Binding ShowTimer}"
+                    StrokeThickness="0"
+                    BackgroundColor="#1E1E2E"
+                    Padding="20,15"
+                    HorizontalOptions="Center"
+                    Shadow="{Shadow Brush=#80000000, Offset='0,4', Radius=10, Opacity=0.5}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="{Binding RecordingTime}"
+                           FontSize="36"
+                           FontAttributes="Bold"
+                           TextColor="#F38BA8"
+                           HorizontalOptions="Center" />
+                    <Label Text="/ 30:00"
+                           FontSize="14"
+                           TextColor="#CDD6F4"
+                           Opacity="0.7"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+            <!-- Progress Bar -->
+            <!-- <ProgressBar Progress="{Binding RecordingProgress}"
+                         IsVisible="{Binding ShowTimer}"
+                         ProgressColor="{StaticResource Primary}"
+                         HeightRequest="8"
+                         Margin="0,0,0,10" /> -->
+            <!-- Transcribed Text -->
             <Label Text="{Binding TranscribedText}"
-                   FontSize="20"
-                   HorizontalOptions="Center" />
+                   FontSize="18"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   VerticalOptions="Center"
+                   Margin="0,20" />
+            <!-- Microphone Button -->
             <ImageButton Source="{Binding MicIcon}"
-                         WidthRequest="80"
-                         HeightRequest="80"
+                         WidthRequest="100"
+                         HeightRequest="100"
                          BackgroundColor="Transparent"
-                         Command="{Binding ToggleRecordingCommand}" />
+                         Command="{Binding ToggleRecordingCommand}"
+                         HorizontalOptions="Center" />
+            <!-- Recording Hint -->
+            <Label Text="Maximum recording time: 30 minutes"
+                   FontSize="12"
+                   TextColor="Gray"
+                   HorizontalOptions="Center"
+                   IsVisible="{Binding IsRecording}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

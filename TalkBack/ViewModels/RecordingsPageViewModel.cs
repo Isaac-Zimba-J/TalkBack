@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Plugin.Maui.Audio;
 using TalkBack.Models;
 using TalkBack.Services;
+using Whisper.net;
 
 namespace TalkBack.ViewModels;
 
@@ -13,6 +14,7 @@ public partial class RecordingsPageViewModel : ObservableObject
 
     private readonly RecordingService _recordingService;
     private readonly IAudioManager _audioManager;
+    private readonly WhisperService _whisperService;
     private IAudioPlayer? _currentPlayer;
 
     [ObservableProperty]
@@ -26,11 +28,17 @@ public partial class RecordingsPageViewModel : ObservableObject
 
     [ObservableProperty]
     private string? _playIcon = "play.png";
+    [ObservableProperty]
+    private string? _currentlyTranscribingId;
 
-    public RecordingsPageViewModel(RecordingService recordingService, IAudioManager audioManager)
+    [ObservableProperty]
+    private bool _isTranscribing;
+
+    public RecordingsPageViewModel(RecordingService recordingService, IAudioManager audioManager, WhisperService whisperService)
     {
         _recordingService = recordingService;
         _audioManager = audioManager;
+        _whisperService = whisperService;
     }
 
     public async Task LoadRecordingsAsync()
@@ -95,6 +103,65 @@ public partial class RecordingsPageViewModel : ObservableObject
         catch (Exception ex)
         {
             await Application.Current!.MainPage!.DisplayAlert("Error", $"Failed to play recording: {ex.Message}", "OK");
+        }
+    }
+
+
+    [RelayCommand]
+    private async Task TranscribeRecording(AudioRecording recording)
+    {
+        if (recording.IsTranscribed)
+        {
+            // show existing transcription
+            await Application.Current.MainPage!.DisplayAlertAsync("Transcription", recording.TranscriptionText ?? "No transcription available.", "OK");
+            return;
+        }
+
+        try
+        {
+            IsTranscribing = true;
+            CurrentlyTranscribingId = recording.Id;
+
+            var audioStream = _recordingService.GetAudioStream(recording.Id);
+            if (audioStream == null)
+            {
+                CurrentlyTranscribingId = null;
+                IsTranscribing = false;
+                await Application.Current!.MainPage!.DisplayAlert("Error", "Audio file not found", "OK");
+                return;
+            }
+
+            // transcribe the audio 
+            var transcription = await _whisperService.TranscribeAsync(audioStream);
+            audioStream.Dispose();
+
+            // update the recording with transcription
+            await _recordingService.UpdateTranscriptionAsync(recording.Id, transcription);
+
+            //update the ui
+            recording.TranscriptionText = transcription;
+            recording.IsTranscribed = true;
+
+            CurrentlyTranscribingId = null;
+            IsTranscribing = false;
+
+            // Refresh the list to show updated transcription status
+            var index = Recordings.IndexOf(recording);
+            if (index >= 0)
+            {
+                Recordings[index] = recording;
+            }
+
+            await Application.Current!.MainPage!.DisplayAlert(
+                   "Success",
+                   "Transcription completed!",
+                   "OK");
+        }
+        catch (Exception ex)
+        {
+            CurrentlyTranscribingId = null;
+            IsTranscribing = false;
+            await Application.Current!.MainPage!.DisplayAlert("Error", $"Failed to transcribe: {ex.Message}", "OK");
         }
     }
 

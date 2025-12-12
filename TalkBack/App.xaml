@@ -13,6 +13,11 @@
             <!-- Converters -->
             <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
             <converters:PlayPauseIconConverter x:Key="PlayPauseIconConverter" />
+            <converters:PlayPauseImageConverter x:Key="PlayPauseImageConverter" />
+            <converters:TranscriptionStatusConverter x:Key="TranscriptionStatusConverter" />
+            <converters:TranscriptionColorConverter x:Key="TranscriptionColorConverter" />
+            <converters:TranscribeButtonIconConverter x:Key="TranscribeButtonIconConverter" />
+            <converters:TranscribeImageConverter x:Key="TranscribeImageConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
