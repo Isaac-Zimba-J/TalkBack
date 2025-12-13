@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 260 64"
+     width="260"
+     height="64">
+
+  <!-- Background -->
+  <rect x="0" y="0" width="260" height="64" rx="18" ry="18"
+        fill="#2563EB"/>
+
+  <!-- Microphone Icon -->
+  <g transform="translate(28,18)" fill="none" stroke="#FFFFFF" stroke-width="2">
+    <rect x="6" y="0" width="12" height="20" rx="6"/>
+    <line x1="12" y1="20" x2="12" y2="28"/>
+    <line x1="6" y1="28" x2="18" y2="28"/>
+  </g>
+
+ 
+
+  <!-- Text -->
+  <text x="150" y="40"
+        text-anchor="middle"
+        font-size="18"
+        font-family="Segoe UI, Arial, sans-serif"
+        font-weight="600"
+        fill="#FFFFFF">
+    Analyze Transcript
+  </text>
+
+</svg>
