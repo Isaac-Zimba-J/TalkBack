@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json;
 using TalkBack.Models;
+using TalkBack.Services;
 
 namespace TalkBack.Services;
 
@@ -70,6 +71,33 @@ public class RecordingService
         {
             recording.Title = newTitle;
             await SaveMetadataAsync();
+        }
+    }
+
+    public async Task UpdateMeetingAnalysisAsync(string recordingId, string summary, List<ActionItem> actionItems)
+    {
+        var recording = _recordings.FirstOrDefault(r => r.Id == recordingId);
+        if (recording != null)
+        {
+            recording.MeetingSummary = summary;
+            recording.ActionItems = actionItems;
+            recording.IsAnalyzed = true;
+            await SaveMetadataAsync();
+        }
+    }
+
+    public async Task UpdateActionItemAsync(string recordingId, ActionItem updatedItem)
+    {
+        var recording = _recordings.FirstOrDefault(r => r.Id == recordingId);
+        if (recording != null)
+        {
+            var item = recording.ActionItems.FirstOrDefault(a => a.Id == updatedItem.Id);
+            if (item != null)
+            {
+                var index = recording.ActionItems.IndexOf(item);
+                recording.ActionItems[index] = updatedItem;
+                await SaveMetadataAsync();
+            }
         }
     }
 

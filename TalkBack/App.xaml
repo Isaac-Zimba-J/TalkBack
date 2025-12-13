@@ -21,6 +21,10 @@
             <converters:EmptyViewIconConverter x:Key="EmptyViewIconConverter" />
             <converters:EmptyViewTextConverter x:Key="EmptyViewTextConverter" />
             <converters:EmptyViewSubtextConverter x:Key="EmptyViewSubtextConverter" />
+            <converters:PriorityColorConverter x:Key="PriorityColorConverter" />
+            <converters:PriorityTextConverter x:Key="PriorityTextConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+            <converters:ShowCompletedTextConverter x:Key="ShowCompletedTextConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

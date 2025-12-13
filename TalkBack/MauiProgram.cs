@@ -5,6 +5,7 @@ using TalkBack.Services;
 using TalkBack.ViewModels;
 using TalkBack.Views;
 using DotNet.Meteor.HotReload.Plugin;
+using CommunityToolkit.Maui;
 
 namespace TalkBack;
 
@@ -16,6 +17,7 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.ConfigureSyncfusionToolkit()
+			.UseMauiCommunityToolkit()
 #if DEBUG
 			.EnableHotReload()
 #endif
@@ -53,11 +55,20 @@ public static class MauiProgram
 		   return new WhisperService(modelPath);
 	   });
 
+		// Add this in your service registration section
+		builder.Services.AddSingleton(sp =>
+			new AzureWhisperService(
+
+			)
+		);
+
 
 		builder.Services.AddSingleton<MainPageViewModel>();
 		builder.Services.AddSingleton<RecordingsPageViewModel>();
+		builder.Services.AddSingleton<ActionItemsPageViewModel>();
 		builder.Services.AddSingleton<MainPage>();
 		builder.Services.AddSingleton<RecordingsPage>();
+		builder.Services.AddSingleton<ActionItemsPage>();
 
 		return builder.Build();
 	}

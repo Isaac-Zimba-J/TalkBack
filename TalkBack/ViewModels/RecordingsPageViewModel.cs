@@ -40,11 +40,19 @@ public partial class RecordingsPageViewModel : ObservableObject
     [ObservableProperty]
     private bool _isSearching;
 
-    public RecordingsPageViewModel(RecordingService recordingService, IAudioManager audioManager, WhisperService whisperService)
+    private readonly AzureWhisperService _azureService;
+
+    // Update constructor
+    public RecordingsPageViewModel(
+        RecordingService recordingService,
+        IAudioManager audioManager,
+        WhisperService whisperService,
+        AzureWhisperService azureService)
     {
         _recordingService = recordingService;
         _audioManager = audioManager;
         _whisperService = whisperService;
+        _azureService = azureService;
     }
 
     public async Task LoadRecordingsAsync()
@@ -254,6 +262,83 @@ public partial class RecordingsPageViewModel : ObservableObject
             await Application.Current!.MainPage!.DisplayAlert("Error", $"Failed to transcribe: {ex.Message}", "OK");
         }
     }
+
+
+    [RelayCommand]
+    private async Task AnalyzeMeeting(AudioRecording recording)
+    {
+        if (!recording.IsTranscribed)
+        {
+            await Application.Current!.MainPage!.DisplayAlert(
+                "Not Transcribed",
+                "Please transcribe this recording first before analyzing.",
+                "OK");
+            return;
+        }
+
+        if (recording.IsAnalyzed)
+        {
+            // Show existing analysis
+            await ShowMeetingAnalysis(recording);
+            return;
+        }
+
+        try
+        {
+            IsTranscribing = true; // Reuse the loading indicator
+
+            var analysis = await _azureService.AnalyzeTranscriptionAsync(recording.TranscriptionText!);
+
+            recording.MeetingSummary = analysis.Summary;
+            recording.ActionItems = analysis.ActionItems;
+            foreach (var item in recording.ActionItems)
+            {
+                item.RecordingId = recording.Id;
+            }
+            recording.IsAnalyzed = true;
+
+            // Save to database
+            await _recordingService.UpdateMeetingAnalysisAsync(
+                recording.Id,
+                analysis.Summary,
+                analysis.ActionItems);
+
+            IsTranscribing = false;
+
+            await ShowMeetingAnalysis(recording);
+        }
+        catch (Exception ex)
+        {
+            IsTranscribing = false;
+            await Application.Current!.MainPage!.DisplayAlert(
+                "Error",
+                $"Failed to analyze meeting: {ex.Message}",
+                "OK");
+        }
+    }
+
+
+    private async Task ShowMeetingAnalysis(AudioRecording recording)
+    {
+        // Show summary first, then navigate to action items
+        var actionItemsSummary = recording.ActionItems.Count > 0
+            ? $"\n\nFound {recording.ActionItems.Count} action items."
+            : "\n\nNo action items found.";
+
+        var viewItems = recording.ActionItems.Count > 0
+            ? await Application.Current!.MainPage!.DisplayAlert(
+                "Meeting Analysis Complete",
+                $"{recording.MeetingSummary}{actionItemsSummary}",
+                "View Action Items",
+                "Close")
+            : false;
+
+        if (viewItems)
+        {
+            await Shell.Current.GoToAsync("//ActionItemsPage");
+        }
+    }
+
 
     [RelayCommand]
     private async Task DeleteRecording(AudioRecording recording)

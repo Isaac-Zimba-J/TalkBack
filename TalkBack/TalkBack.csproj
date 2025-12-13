@@ -33,18 +33,12 @@
     </PropertyGroup>
     <ItemGroup>
         <!-- App Icon -->
-        <MauiIcon Include="Resources\AppIcon\appicon.svg"
-                  ForegroundFile="Resources\AppIcon\appiconfg.svg"
-                  Color="#ffffffff" />
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#ffffffff" />
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg"
-                          Color="#ffffffff"
-                          BaseSize="128,128" />
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#ffffffff" BaseSize="128,128" />
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
-        <MauiImage Update="Resources\Images\dotnet_bot.png"
-                   Resize="True"
-                   BaseSize="300,185" />
+        <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
         <!-- Base size for images -->
         <!-- <MauiImage Update="Resources\Images\edit.svg"
                    Resize="True"
@@ -58,33 +52,25 @@
         <MauiImage Update="Resources\Images\transcribed.svg"
                    Resize="True"
                    BaseSize="40,40" /> -->
+        <MauiImage Update="Resources\Images\bin.png" Resize="True" BaseSize="12,12" />
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*" />
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-        <MauiAsset Include="Resources\Raw\**"
-                   LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm"
-                          Version="8.4.0" />
-        <PackageReference Include="DotNetMeteor.HotReload.Plugin"
-                          Version="3.3.0" />
-        <PackageReference Include="Microsoft.Extensions.AI"
-                          Version="10.1.0" />
-        <PackageReference Include="Microsoft.Maui.Controls"
-                          Version="$(MauiVersion)" />
-        <PackageReference Include="Microsoft.Maui.Essentials"
-                          Version="$(MauiVersion)" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug"
-                          Version="10.0.1" />
-        <PackageReference Include="Plugin.Maui.Audio"
-                          Version="4.0.0" />
-        <PackageReference Include="Syncfusion.Maui.Toolkit"
-                          Version="1.0.8" />
-        <PackageReference Include="Whisper.net"
-                          Version="1.9.0" />
-        <PackageReference Include="Whisper.net.AllRuntimes"
-                          Version="1.9.0" />
+        <PackageReference Include="Azure.AI.Inference" Version="1.0.0-beta.5" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+        <PackageReference Include="DotNetMeteor.HotReload.Plugin" Version="3.3.0" />
+        <PackageReference Include="Microsoft.Extensions.AI" Version="10.1.0" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Maui.Essentials" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.1" />
+        <PackageReference Include="Plugin.Maui.Audio" Version="4.0.0" />
+        <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.8" />
+        <PackageReference Include="Whisper.net" Version="1.9.0" />
+        <PackageReference Include="Whisper.net.AllRuntimes" Version="1.9.0" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Converters/" />

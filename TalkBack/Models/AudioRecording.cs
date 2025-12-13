@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TalkBack.Models;
@@ -28,4 +29,13 @@ public partial class AudioRecording : ObservableObject
 
     [ObservableProperty]
     private long _fileSizeBytes;
+
+    [ObservableProperty]
+    private string? _meetingSummary;
+
+    [ObservableProperty]
+    private bool _isAnalyzed;
+
+    [ObservableProperty]
+    private List<ActionItem> _actionItems = new();
 }

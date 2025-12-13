@@ -4,251 +4,426 @@
              xmlns:viewModel="clr-namespace:TalkBack.ViewModels"
              xmlns:models="clr-namespace:TalkBack.Models"
              x:Class="TalkBack.Views.RecordingsPage"
+             xmlns:mauiKit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:DataType="viewModel:RecordingsPageViewModel"
-             Title="Recordings">
+             Title="Recordings"
+             BackgroundColor="#f6f6f6ff">
+    <Page.Behaviors>
+        <mauiKit:StatusBarBehavior StatusBarColor="Black" />
+    </Page.Behaviors>
     <Grid RowDefinitions="Auto,Auto,*">
-        <!-- Loading Overlay -->
+        <!-- Modern Loading Overlay -->
         <Grid Grid.RowSpan="3"
               IsVisible="{Binding IsTranscribing}"
-              BackgroundColor="#80000000"
+              BackgroundColor="#CC000000"
               ZIndex="1000">
             <Border StrokeThickness="0"
                     BackgroundColor="White"
-                    Padding="30"
+                    Padding="40,32"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
-                    Shadow="{Shadow Brush=#80000000, Offset='0,4', Radius=15, Opacity=0.6}">
+                    Shadow="{Shadow Brush=#40000000, Offset='0,8', Radius=24, Opacity=0.2}"
+                    WidthRequest="280">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="18" />
+                    <RoundRectangle CornerRadius="24" />
                 </Border.StrokeShape>
-                <VerticalStackLayout Spacing="15">
-                    <ActivityIndicator IsRunning="{Binding IsTranscribing}"
-                                       Color="{StaticResource Primary}"
-                                       WidthRequest="40"
-                                       HeightRequest="40"
-                                       HorizontalOptions="Center" />
-                    <Label Text="Transcribing..."
-                           FontSize="16"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center" />
-                    <Label Text="Please wait while we process the audio"
-                           FontSize="12"
-                           TextColor="Gray"
-                           HorizontalOptions="Center" />
+                <VerticalStackLayout Spacing="20">
+                    <Border BackgroundColor="#F0F4F8"
+                            Padding="20"
+                            StrokeThickness="0"
+                            HorizontalOptions="Center">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="50" />
+                        </Border.StrokeShape>
+                        <ActivityIndicator IsRunning="{Binding IsTranscribing}"
+                                           Color="{StaticResource Primary}"
+                                           WidthRequest="40"
+                                           HeightRequest="40" />
+                    </Border>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Transcribing..."
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="#2C3E50" />
+                        <Label Text="Please wait while we process the audio"
+                               FontSize="13"
+                               TextColor="#7F8C8D"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
             </Border>
         </Grid>
-        <!-- Header -->
-        <VerticalStackLayout Grid.Row="0"
-                             Padding="20,10"
-                             BackgroundColor="{StaticResource Primary}">
-            <Label Text="My Recordings"
-                   FontSize="22"
-                   FontAttributes="Bold"
-                   TextColor="White"
-                   HorizontalOptions="Start" />
-            <Label Text="{Binding Recordings.Count, StringFormat='{0} recordings'}"
-                   FontSize="14"
-                   TextColor="White"
-                   HorizontalOptions="Start" />
-        </VerticalStackLayout>
-        <!-- Search Bar -->
-        <Border Grid.Row="1"
-                Margin="10,10,10,5"
-                StrokeThickness="1"
-                Stroke="{StaticResource Primary}"
-                BackgroundColor="White"
-                Shadow="{Shadow Brush=#40000000, Offset='0,2', Radius=8, Opacity=0.3}">
+        <!-- Modern Header with Gradient -->
+        <!-- <Border Grid.Row="0"
+                StrokeThickness="0"
+                BackgroundColor="{StaticResource Primary}"
+                Padding="20,20,20,16">
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
+                <RoundRectangle CornerRadius="0,0,24,24" />
+            </Border.StrokeShape>
+            <VerticalStackLayout Spacing="8">
+                <Label Text="My Recordings"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+                <Border BackgroundColor="#FFFFFF30"
+                        Padding="10,6"
+                        HorizontalOptions="Start"
+                        StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <Label Text="{Binding Recordings.Count, StringFormat='{0} recordings'}"
+                           FontSize="13"
+                           TextColor="White"
+                           FontAttributes="Bold" />
+                </Border>
+            </VerticalStackLayout>
+        </Border> -->
+        <!-- Modern Search Bar -->
+        <Border Grid.Row="1"
+                Margin="16,16,16,8"
+                StrokeThickness="0"
+                BackgroundColor="White"
+                Padding="12,8"
+                Shadow="{Shadow Brush=#15000000, Offset='0,2', Radius=12, Opacity=0.08}">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="14" />
             </Border.StrokeShape>
             <Grid ColumnDefinitions="Auto,*,Auto"
-                  Padding="10,5">
+                  ColumnSpacing="10">
                 <Image Grid.Column="0"
                        Source="search.svg"
-                       WidthRequest="20"
-                       HeightRequest="20"
-                       VerticalOptions="Center"
-                       Margin="5,0" />
+                       WidthRequest="18"
+                       HeightRequest="18"
+                       Opacity="0.5"
+                       VerticalOptions="Center" />
                 <Entry Grid.Column="1"
                        Text="{Binding SearchText}"
                        Placeholder="Search by title or transcription..."
-                       FontSize="14"
+                       FontSize="15"
                        VerticalOptions="Center"
                        BackgroundColor="Transparent" />
-                <ImageButton Grid.Column="2"
-                             Source="close.svg"
-                             IsVisible="{Binding IsSearching}"
-                             Command="{Binding ClearSearchCommand}"
-                             Padding="5"
-                             WidthRequest="30"
-                             HeightRequest="30"
-                             CornerRadius="15"
-                             BackgroundColor="#E0E0E0"
-                             Aspect="AspectFit"
-                             VerticalOptions="Center" />
+                <Border Grid.Column="2"
+                        IsVisible="{Binding IsSearching}"
+                        BackgroundColor="#F0F0F0"
+                        Padding="6"
+                        StrokeThickness="0"
+                        VerticalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ClearSearchCommand}" />
+                    </Border.GestureRecognizers>
+                    <Image Source="close.svg"
+                           WidthRequest="16"
+                           HeightRequest="16"
+                           Aspect="AspectFit" />
+                </Border>
             </Grid>
         </Border>
         <!-- Recordings List -->
         <CollectionView Grid.Row="2"
                         ItemsSource="{Binding Recordings}"
                         SelectionMode="None"
-                        Margin="10,5">
+                        Margin="16,8,16,16">
             <CollectionView.EmptyView>
                 <VerticalStackLayout HorizontalOptions="Center"
                                      VerticalOptions="Center"
-                                     Spacing="10">
-                    <Image Source="{Binding IsSearching, Converter={StaticResource EmptyViewIconConverter}}"
-                           WidthRequest="80"
-                           HeightRequest="80"
-                           HorizontalOptions="Center" />
+                                     Spacing="16"
+                                     Padding="40">
+                    <Border BackgroundColor="#F0F4F8"
+                            Padding="20"
+                            StrokeThickness="0"
+                            HorizontalOptions="Center">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="30" />
+                        </Border.StrokeShape>
+                        <Image Source="{Binding IsSearching, Converter={StaticResource EmptyViewIconConverter}}"
+                               WidthRequest="64"
+                               HeightRequest="64"
+                               Opacity="0.5" />
+                    </Border>
                     <Label Text="{Binding IsSearching, Converter={StaticResource EmptyViewTextConverter}}"
-                           FontSize="18"
-                           HorizontalOptions="Center" />
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="#2C3E50" />
                     <Label Text="{Binding IsSearching, Converter={StaticResource EmptyViewSubtextConverter}}"
                            FontSize="14"
-                           TextColor="Gray"
-                           HorizontalOptions="Center" />
+                           TextColor="#7F8C8D"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:AudioRecording">
-                    <Frame Padding="15"
-                           Margin="5,8"
-                           BackgroundColor="White"
-                           CornerRadius="12"
-                           HasShadow="True">
+                    <Border Padding="16"
+                            Margin="0,6"
+                            BackgroundColor="White"
+                            StrokeThickness="0"
+                            Shadow="{Shadow Brush=#10000000, Offset='0,2', Radius=10, Opacity=0.06}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
                         <Grid ColumnDefinitions="*,Auto"
-                              RowDefinitions="Auto,Auto,Auto,Auto,Auto"
-                              ColumnSpacing="10"
-                              RowSpacing="5">
+                              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnSpacing="12"
+                              RowSpacing="8">
                             <!-- Title with Edit Button -->
                             <HorizontalStackLayout Grid.Row="0"
                                                    Grid.Column="0"
-                                                   Spacing="5">
+                                                   Spacing="8">
                                 <Label Text="{Binding Title}"
                                        FontSize="18"
                                        FontAttributes="Bold"
+                                       TextColor="#2C3E50"
                                        VerticalOptions="Center" />
-                                <ImageButton Source="edit.svg"
-                                             Padding="3"
-                                             WidthRequest="25"
-                                             HeightRequest="25"
-                                             CornerRadius="5"
-                                             BackgroundColor="Blue"
-                                             Aspect="AspectFit"
-                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=EditRecordingTitleCommand}"
-                                             CommandParameter="{Binding .}" />
+                                <Border BackgroundColor="#F0F4F8"
+                                        Padding="6"
+                                        StrokeThickness="0"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=EditRecordingTitleCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Image Source="edit.svg"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           Aspect="AspectFit"
+                                           Opacity="0.6" />
+                                </Border>
                             </HorizontalStackLayout>
-                            <!-- Date -->
-                            <Label Grid.Row="1"
-                                   Grid.Column="0"
-                                   Text="{Binding RecordedAt, StringFormat='{0:MMM dd, yyyy h:mm tt}'}"
-                                   FontSize="12"
-                                   TextColor="Gray" />
-                            <!-- Duration -->
-                            <Label Grid.Row="2"
-                                   Grid.Column="0"
-                                   Text="{Binding Duration, StringFormat='Duration: {0:mm\\:ss}'}"
-                                   FontSize="12"
-                                   TextColor="Gray" />
-                            <!-- Transcription Status -->
-                            <HorizontalStackLayout Grid.Row="3"
+                            <!-- Date & Duration -->
+                            <HorizontalStackLayout Grid.Row="1"
                                                    Grid.Column="0"
-                                                   Grid.ColumnSpan="2"
-                                                   Spacing="5"
-                                                   Margin="0,5,0,0">
+                                                   Spacing="12">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Border BackgroundColor="#EDF2F7"
+                                            Padding="4"
+                                            StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="6" />
+                                        </Border.StrokeShape>
+                                        <Image Source="calendar.svg"
+                                               WidthRequest="12"
+                                               HeightRequest="12"
+                                               Opacity="0.6" />
+                                    </Border>
+                                    <Label Text="{Binding RecordedAt, StringFormat='{0:MMM dd, yyyy h:mm tt}'}"
+                                           FontSize="12"
+                                           TextColor="#64748B"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </HorizontalStackLayout>
+                            <!-- Duration -->
+                            <HorizontalStackLayout Grid.Row="2"
+                                                   Grid.Column="0"
+                                                   Spacing="6">
+                                <Border BackgroundColor="#FEF3E7"
+                                        Padding="4"
+                                        StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="6" />
+                                    </Border.StrokeShape>
+                                    <Label Text="⏱"
+                                           FontSize="12"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <Label Text="{Binding Duration, StringFormat='Duration: {0:mm\\:ss}'}"
+                                       FontSize="12"
+                                       TextColor="#64748B"
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <!-- Transcription Status Badge -->
+                            <Border Grid.Row="3"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    BackgroundColor="{Binding IsTranscribed, Converter={StaticResource TranscriptionColorConverter}}"
+                                    Padding="8,5"
+                                    HorizontalOptions="Start"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
                                 <Label Text="{Binding IsTranscribed, Converter={StaticResource TranscriptionStatusConverter}}"
                                        FontSize="11"
-                                       TextColor="{Binding IsTranscribed, Converter={StaticResource TranscriptionColorConverter}}"
+                                       TextColor="White"
                                        FontAttributes="Bold" />
-                            </HorizontalStackLayout>
+                            </Border>
                             <!-- Transcription Preview with Edit Button -->
-                            <HorizontalStackLayout Grid.Row="4"
-                                                   Grid.Column="0"
-                                                   Grid.ColumnSpan="2"
-                                                   Spacing="5"
-                                                   Margin="0,5,0,0"
-                                                   IsVisible="{Binding IsTranscribed}">
-                                <Label Text="{Binding TranscriptionText}"
-                                       FontSize="12"
-                                       TextColor="DarkGray"
-                                       LineBreakMode="TailTruncation"
-                                       MaxLines="2"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="FillAndExpand" />
-                                <ImageButton Source="edit.svg"
-                                             Padding="3"
-                                             WidthRequest="25"
-                                             HeightRequest="25"
-                                             CornerRadius="5"
-                                             BackgroundColor="Transparent"
-                                             Aspect="AspectFit"
-                                             VerticalOptions="Start"
-                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=EditTranscriptionCommand}"
-                                             CommandParameter="{Binding .}" />
-                            </HorizontalStackLayout>
-                            <!-- Action Buttons -->
-                            <VerticalStackLayout Grid.Row="0"
-                                                 Grid.RowSpan="3"
-                                                 Grid.Column="1"
-                                                 VerticalOptions="Center"
-                                                 Spacing="10">
-                                <!-- Play/Pause Button -->
-                                <ImageButton Source="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=IsPlaying, Converter={StaticResource PlayPauseImageConverter}}"
-                                             WidthRequest="35"
-                                             HeightRequest="35"
-                                             Aspect="AspectFit"
-                                             BackgroundColor="Transparent"
-                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=PlayRecordingCommand}"
-                                             CommandParameter="{Binding .}">
-                                    <ImageButton.Triggers>
-                                        <DataTrigger TargetType="ImageButton"
-                                                     Binding="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=CurrentlyPlayingId}"
-                                                     Value="{Binding Id}">
-                                            <DataTrigger.Setters>
-                                                <Setter Property="Source"
-                                                        Value="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=IsPlaying, Converter={StaticResource PlayPauseImageConverter}}" />
-                                            </DataTrigger.Setters>
-                                        </DataTrigger>
-                                    </ImageButton.Triggers>
-                                </ImageButton>
-                                <!-- Transcribe Button -->
-                                <ImageButton WidthRequest="35"
-                                             HeightRequest="35"
-                                             Aspect="AspectFit"
-                                             BackgroundColor="Transparent"
-                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=TranscribeRecordingCommand}"
-                                             CommandParameter="{Binding .}">
-                                    <ImageButton.Source>
-                                        <MultiBinding Converter="{StaticResource TranscribeImageConverter}">
-                                            <Binding Path="IsTranscribed" />
-                                            <Binding Path="Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=CurrentlyTranscribingId" />
-                                            <Binding Path="Id" />
-                                        </MultiBinding>
-                                    </ImageButton.Source>
-                                    <ImageButton.Triggers>
-                                        <DataTrigger TargetType="ImageButton"
-                                                     Binding="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=CurrentlyTranscribingId}"
-                                                     Value="{Binding Id}">
-                                            <Setter Property="IsEnabled"
-                                                    Value="False" />
-                                            <Setter Property="Opacity"
-                                                    Value="0.6" />
-                                        </DataTrigger>
-                                    </ImageButton.Triggers>
-                                </ImageButton>
-                                <!-- Delete Button -->
-                                <ImageButton Source="delete.svg"
-                                             WidthRequest="35"
-                                             HeightRequest="35"
-                                             Aspect="AspectFit"
-                                             BackgroundColor="Transparent"
-                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=DeleteRecordingCommand}"
-                                             CommandParameter="{Binding .}" />
-                            </VerticalStackLayout>
+                            <Border Grid.Row="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    BackgroundColor="#F8F9FA"
+                                    Padding="12"
+                                    StrokeThickness="0"
+                                    IsVisible="{Binding IsTranscribed}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
+                                <Grid ColumnDefinitions="*,Auto"
+                                      ColumnSpacing="8">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding TranscriptionText}"
+                                           FontSize="12"
+                                           TextColor="#64748B"
+                                           LineBreakMode="TailTruncation"
+                                           MaxLines="2"
+                                           VerticalOptions="Center" />
+                                    <Border Grid.Column="1"
+                                            BackgroundColor="White"
+                                            Padding="6"
+                                            StrokeThickness="0"
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=EditTranscriptionCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Image Source="edit.svg"
+                                               WidthRequest="16"
+                                               HeightRequest="16"
+                                               Aspect="AspectFit"
+                                               Opacity="0.6" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <!-- Action Buttons Section -->
+                            <Border Grid.Row="5"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    BackgroundColor="Transparent"
+                                    StrokeThickness="0"
+                                    Padding="0,4,0,0">
+                                <HorizontalStackLayout Spacing="8"
+                                                       HorizontalOptions="End">
+                                    <!-- Play/Pause Button -->
+                                    <Border BackgroundColor="#E8F5E9"
+                                            Padding="8"
+                                            StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=PlayRecordingCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Image Source="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=IsPlaying, Converter={StaticResource PlayPauseImageConverter}}"
+                                               WidthRequest="20"
+                                               HeightRequest="20"
+                                               Aspect="AspectFit">
+                                            <Image.Triggers>
+                                                <DataTrigger TargetType="Image"
+                                                             Binding="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=CurrentlyPlayingId}"
+                                                             Value="{Binding Id}">
+                                                    <Setter Property="Source"
+                                                            Value="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=IsPlaying, Converter={StaticResource PlayPauseImageConverter}}" />
+                                                </DataTrigger>
+                                            </Image.Triggers>
+                                        </Image>
+                                    </Border>
+                                    <!-- Transcribe Button -->
+                                    <Border BackgroundColor="#E3F2FD"
+                                            Padding="8"
+                                            StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border"
+                                                         Binding="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=CurrentlyTranscribingId}"
+                                                         Value="{Binding Id}">
+                                                <Setter Property="Opacity"
+                                                        Value="0.5" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=TranscribeRecordingCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Image WidthRequest="20"
+                                               HeightRequest="20"
+                                               Aspect="AspectFit">
+                                            <Image.Source>
+                                                <MultiBinding Converter="{StaticResource TranscribeImageConverter}">
+                                                    <Binding Path="IsTranscribed" />
+                                                    <Binding Path="Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=CurrentlyTranscribingId" />
+                                                    <Binding Path="Id" />
+                                                </MultiBinding>
+                                            </Image.Source>
+                                            <Image.Triggers>
+                                                <DataTrigger TargetType="Image"
+                                                             Binding="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=CurrentlyTranscribingId}"
+                                                             Value="{Binding Id}">
+                                                    <Setter Property="IsEnabled"
+                                                            Value="False" />
+                                                    <Setter Property="Opacity"
+                                                            Value="0.6" />
+                                                </DataTrigger>
+                                            </Image.Triggers>
+                                        </Image>
+                                    </Border>
+                                    <!-- Analyze Meeting Button -->
+                                    <Border BackgroundColor="#F3E5F5"
+                                            Padding="8"
+                                            StrokeThickness="0"
+                                            IsVisible="{Binding IsTranscribed}">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=AnalyzeMeetingCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Image Source="ai.svg"
+                                               WidthRequest="20"
+                                               HeightRequest="20"
+                                               Aspect="AspectFit">
+                                            <Image.Triggers>
+                                                <DataTrigger TargetType="Image"
+                                                             Binding="{Binding IsAnalyzed}"
+                                                             Value="True">
+                                                    <Setter Property="Opacity"
+                                                            Value="1.0" />
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="Image"
+                                                             Binding="{Binding IsAnalyzed}"
+                                                             Value="False">
+                                                    <Setter Property="Opacity"
+                                                            Value="0.5" />
+                                                </DataTrigger>
+                                            </Image.Triggers>
+                                        </Image>
+                                    </Border>
+                                    <!-- Delete Button -->
+                                    <Border BackgroundColor="#FFEBEE"
+                                            Padding="8"
+                                            StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=DeleteRecordingCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Image Source="delete.svg"
+                                               WidthRequest="20"
+                                               HeightRequest="20"
+                                               Aspect="AspectFit" />
+                                    </Border>
+                                </HorizontalStackLayout>
+                            </Border>
                         </Grid>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

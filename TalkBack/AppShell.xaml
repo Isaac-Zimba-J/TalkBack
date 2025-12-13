@@ -3,6 +3,7 @@
        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:views="clr-namespace:TalkBack.Views"
+       Shell.BackgroundColor="#F8F9FA"
        FlyoutBehavior="Disabled"
        Title="TalkBack">
     <TabBar>
@@ -14,5 +15,9 @@
                       Icon="recordings.png"
                       ContentTemplate="{DataTemplate views:RecordingsPage}"
                       Route="RecordingsPage" />
+        <ShellContent Title="Action Items"
+                      Icon="checklist.png"
+                      ContentTemplate="{DataTemplate views:ActionItemsPage}"
+                      Route="ActionItemsPage" />
     </TabBar>
 </Shell>
