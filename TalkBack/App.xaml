@@ -14,10 +14,13 @@
             <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
             <converters:PlayPauseIconConverter x:Key="PlayPauseIconConverter" />
             <converters:PlayPauseImageConverter x:Key="PlayPauseImageConverter" />
+            <converters:TranscribeImageConverter x:Key="TranscribeImageConverter" />
             <converters:TranscriptionStatusConverter x:Key="TranscriptionStatusConverter" />
             <converters:TranscriptionColorConverter x:Key="TranscriptionColorConverter" />
             <converters:TranscribeButtonIconConverter x:Key="TranscribeButtonIconConverter" />
-            <converters:TranscribeImageConverter x:Key="TranscribeImageConverter" />
+            <converters:EmptyViewIconConverter x:Key="EmptyViewIconConverter" />
+            <converters:EmptyViewTextConverter x:Key="EmptyViewTextConverter" />
+            <converters:EmptyViewSubtextConverter x:Key="EmptyViewSubtextConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
