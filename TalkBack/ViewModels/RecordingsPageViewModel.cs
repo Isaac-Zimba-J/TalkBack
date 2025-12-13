@@ -19,6 +19,7 @@ public partial class RecordingsPageViewModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<AudioRecording> _recordings = new();
+    private List<AudioRecording> _allRecordings = new();
 
     [ObservableProperty]
     private string? _currentlyPlayingId;
@@ -33,6 +34,11 @@ public partial class RecordingsPageViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isTranscribing;
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    [ObservableProperty]
+    private bool _isSearching;
 
     public RecordingsPageViewModel(RecordingService recordingService, IAudioManager audioManager, WhisperService whisperService)
     {
@@ -44,7 +50,95 @@ public partial class RecordingsPageViewModel : ObservableObject
     public async Task LoadRecordingsAsync()
     {
         var recordings = _recordingService.GetAllRecordings();
-        Recordings = new ObservableCollection<AudioRecording>(recordings.OrderByDescending(r => r.RecordedAt));
+        _allRecordings = recordings.OrderByDescending(r => r.RecordedAt).ToList();
+        Recordings = new ObservableCollection<AudioRecording>(_allRecordings);
+    }
+
+
+    [RelayCommand]
+    private void SearchRecordings()
+    {
+        ApplyFilter();
+    }
+
+    [RelayCommand]
+    private void ClearSearch()
+    {
+        SearchText = string.Empty;
+        IsSearching = false;
+        ApplyFilter();
+    }
+
+
+    private void ApplyFilter()
+    {
+        var filtered = _allRecordings.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var searchLower = SearchText.ToLower();
+            filtered = filtered.Where(r =>
+                r.Title.ToLower().Contains(searchLower) ||
+                (r.TranscriptionText?.ToLower().Contains(searchLower) ?? false));
+        }
+
+        Recordings = new ObservableCollection<AudioRecording>(
+            filtered.OrderByDescending(r => r.RecordedAt));
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        IsSearching = !string.IsNullOrWhiteSpace(value);
+        ApplyFilter();
+    }
+
+    [RelayCommand]
+    private async Task EditRecordingTitle(AudioRecording recording)
+    {
+        var result = await Application.Current!.MainPage!.DisplayPromptAsync(
+            "Edit Title",
+            "Enter a new title for this recording:",
+            initialValue: recording.Title,
+            maxLength: 100,
+            keyboard: Keyboard.Text);
+
+        if (!string.IsNullOrWhiteSpace(result) && result != recording.Title)
+        {
+            await _recordingService.UpdateRecordingTitleAsync(recording.Id, result);
+            recording.Title = result;
+
+            // Note: No need to replace the object in Recordings since we're updating the property directly
+            // The binding will automatically update the UI
+        }
+    }
+
+    [RelayCommand]
+    private async Task EditTranscription(AudioRecording recording)
+    {
+        if (!recording.IsTranscribed)
+        {
+            await Application.Current!.MainPage!.DisplayAlert(
+                "No Transcription",
+                "Please transcribe this recording first.",
+                "OK");
+            return;
+        }
+
+        var result = await Application.Current!.MainPage!.DisplayPromptAsync(
+            "Edit Transcription",
+            "Edit the transcription text:",
+            initialValue: recording.TranscriptionText ?? "",
+            maxLength: 5000,
+            keyboard: Keyboard.Text);
+
+        if (result != null && result != recording.TranscriptionText)
+        {
+            await _recordingService.UpdateTranscriptionAsync(recording.Id, result);
+            recording.TranscriptionText = result;
+
+            // Note: No need to replace the object in Recordings since we're updating the property directly
+            // The binding will automatically update the UI
+        }
     }
 
 
@@ -145,12 +239,8 @@ public partial class RecordingsPageViewModel : ObservableObject
             CurrentlyTranscribingId = null;
             IsTranscribing = false;
 
-            // Refresh the list to show updated transcription status
-            var index = Recordings.IndexOf(recording);
-            if (index >= 0)
-            {
-                Recordings[index] = recording;
-            }
+            // Note: No need to replace the object in Recordings since we're updating the properties directly
+            // The binding will automatically update the UI
 
             await Application.Current!.MainPage!.DisplayAlert(
                    "Success",

@@ -3,22 +3,22 @@ using System.Globalization;
 
 namespace TalkBack.Converters;
 
-public class PlayPauseIconConverter : IValueConverter
+public class EmptyViewIconConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is bool isPlaying)
+        if (value is bool isSearching)
         {
-            return isPlaying ? "pause.svg" : "play.svg";
+            return isSearching ? "search.svg" : "note.svg";
         }
-        return "play.svg";
+        return "note.svg";
     }
+
 
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
-
 
 }

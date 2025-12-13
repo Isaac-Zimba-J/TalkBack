@@ -6,9 +6,9 @@
              x:Class="TalkBack.Views.RecordingsPage"
              x:DataType="viewModel:RecordingsPageViewModel"
              Title="Recordings">
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*">
         <!-- Loading Overlay -->
-        <Grid Grid.RowSpan="2"
+        <Grid Grid.RowSpan="3"
               IsVisible="{Binding IsTranscribing}"
               BackgroundColor="#80000000"
               ZIndex="1000">
@@ -52,22 +52,60 @@
                    TextColor="White"
                    HorizontalOptions="Start" />
         </VerticalStackLayout>
+        <!-- Search Bar -->
+        <Border Grid.Row="1"
+                Margin="10,10,10,5"
+                StrokeThickness="1"
+                Stroke="{StaticResource Primary}"
+                BackgroundColor="White"
+                Shadow="{Shadow Brush=#40000000, Offset='0,2', Radius=8, Opacity=0.3}">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                  Padding="10,5">
+                <Image Grid.Column="0"
+                       Source="search.svg"
+                       WidthRequest="20"
+                       HeightRequest="20"
+                       VerticalOptions="Center"
+                       Margin="5,0" />
+                <Entry Grid.Column="1"
+                       Text="{Binding SearchText}"
+                       Placeholder="Search by title or transcription..."
+                       FontSize="14"
+                       VerticalOptions="Center"
+                       BackgroundColor="Transparent" />
+                <ImageButton Grid.Column="2"
+                             Source="close.svg"
+                             IsVisible="{Binding IsSearching}"
+                             Command="{Binding ClearSearchCommand}"
+                             Padding="5"
+                             WidthRequest="30"
+                             HeightRequest="30"
+                             CornerRadius="15"
+                             BackgroundColor="#E0E0E0"
+                             Aspect="AspectFit"
+                             VerticalOptions="Center" />
+            </Grid>
+        </Border>
         <!-- Recordings List -->
-        <CollectionView Grid.Row="1"
+        <CollectionView Grid.Row="2"
                         ItemsSource="{Binding Recordings}"
                         SelectionMode="None"
-                        Margin="10">
+                        Margin="10,5">
             <CollectionView.EmptyView>
                 <VerticalStackLayout HorizontalOptions="Center"
                                      VerticalOptions="Center"
                                      Spacing="10">
-                    <Label Text="📝"
-                           FontSize="60"
+                    <Image Source="{Binding IsSearching, Converter={StaticResource EmptyViewIconConverter}}"
+                           WidthRequest="80"
+                           HeightRequest="80"
                            HorizontalOptions="Center" />
-                    <Label Text="No recordings yet"
+                    <Label Text="{Binding IsSearching, Converter={StaticResource EmptyViewTextConverter}}"
                            FontSize="18"
                            HorizontalOptions="Center" />
-                    <Label Text="Go back and record something!"
+                    <Label Text="{Binding IsSearching, Converter={StaticResource EmptyViewSubtextConverter}}"
                            FontSize="14"
                            TextColor="Gray"
                            HorizontalOptions="Center" />
@@ -84,12 +122,24 @@
                               RowDefinitions="Auto,Auto,Auto,Auto,Auto"
                               ColumnSpacing="10"
                               RowSpacing="5">
-                            <!-- Title -->
-                            <Label Grid.Row="0"
-                                   Grid.Column="0"
-                                   Text="{Binding Title}"
-                                   FontSize="18"
-                                   FontAttributes="Bold" />
+                            <!-- Title with Edit Button -->
+                            <HorizontalStackLayout Grid.Row="0"
+                                                   Grid.Column="0"
+                                                   Spacing="5">
+                                <Label Text="{Binding Title}"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center" />
+                                <ImageButton Source="edit.svg"
+                                             Padding="3"
+                                             WidthRequest="25"
+                                             HeightRequest="25"
+                                             CornerRadius="5"
+                                             BackgroundColor="Blue"
+                                             Aspect="AspectFit"
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=EditRecordingTitleCommand}"
+                                             CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
                             <!-- Date -->
                             <Label Grid.Row="1"
                                    Grid.Column="0"
@@ -113,23 +163,37 @@
                                        TextColor="{Binding IsTranscribed, Converter={StaticResource TranscriptionColorConverter}}"
                                        FontAttributes="Bold" />
                             </HorizontalStackLayout>
-                            <!-- Transcription Preview -->
-                            <Label Grid.Row="4"
-                                   Grid.Column="0"
-                                   Grid.ColumnSpan="2"
-                                   Text="{Binding TranscriptionText}"
-                                   FontSize="12"
-                                   TextColor="DarkGray"
-                                   LineBreakMode="TailTruncation"
-                                   MaxLines="2"
-                                   Margin="0,5,0,0"
-                                   IsVisible="{Binding IsTranscribed}" />
+                            <!-- Transcription Preview with Edit Button -->
+                            <HorizontalStackLayout Grid.Row="4"
+                                                   Grid.Column="0"
+                                                   Grid.ColumnSpan="2"
+                                                   Spacing="5"
+                                                   Margin="0,5,0,0"
+                                                   IsVisible="{Binding IsTranscribed}">
+                                <Label Text="{Binding TranscriptionText}"
+                                       FontSize="12"
+                                       TextColor="DarkGray"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="FillAndExpand" />
+                                <ImageButton Source="edit.svg"
+                                             Padding="3"
+                                             WidthRequest="25"
+                                             HeightRequest="25"
+                                             CornerRadius="5"
+                                             BackgroundColor="Transparent"
+                                             Aspect="AspectFit"
+                                             VerticalOptions="Start"
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=EditTranscriptionCommand}"
+                                             CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
                             <!-- Action Buttons -->
-                            <HorizontalStackLayout Grid.Row="0"
-                                                   Grid.RowSpan="3"
-                                                   Grid.Column="1"
-                                                   VerticalOptions="Center"
-                                                   Spacing="10">
+                            <VerticalStackLayout Grid.Row="0"
+                                                 Grid.RowSpan="3"
+                                                 Grid.Column="1"
+                                                 VerticalOptions="Center"
+                                                 Spacing="10">
                                 <!-- Play/Pause Button -->
                                 <ImageButton Source="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=IsPlaying, Converter={StaticResource PlayPauseImageConverter}}"
                                              WidthRequest="35"
@@ -175,14 +239,14 @@
                                     </ImageButton.Triggers>
                                 </ImageButton>
                                 <!-- Delete Button -->
-                                <ImageButton Source="delete.png"
+                                <ImageButton Source="delete.svg"
                                              WidthRequest="35"
                                              HeightRequest="35"
                                              Aspect="AspectFit"
                                              BackgroundColor="Transparent"
                                              Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:RecordingsPageViewModel}}, Path=DeleteRecordingCommand}"
                                              CommandParameter="{Binding .}" />
-                            </HorizontalStackLayout>
+                            </VerticalStackLayout>
                         </Grid>
                     </Frame>
                 </DataTemplate>

@@ -8,9 +8,9 @@ public class PlayPauseImageConverter : IValueConverter
     {
         if (value is bool isPlaying)
         {
-            return isPlaying ? "pause.svg" : "play.png";
+            return isPlaying ? "pause.svg" : "play.svg";
         }
-        return "play.png";
+        return "play.svg";
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

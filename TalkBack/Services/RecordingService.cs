@@ -63,6 +63,16 @@ public class RecordingService
         }
     }
 
+    public async Task UpdateRecordingTitleAsync(string recordingId, string newTitle)
+    {
+        var recording = _recordings.FirstOrDefault(r => r.Id == recordingId);
+        if (recording != null)
+        {
+            recording.Title = newTitle;
+            await SaveMetadataAsync();
+        }
+    }
+
     public List<AudioRecording> GetAllRecordings()
     {
         return _recordings.OrderByDescending(r => r.RecordedAt).ToList();

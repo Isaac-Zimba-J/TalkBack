@@ -3,15 +3,15 @@ using System.Globalization;
 
 namespace TalkBack.Converters;
 
-public class PlayPauseIconConverter : IValueConverter
+public class EmptyViewSubtextConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is bool isPlaying)
+        if (value is bool isSearching)
         {
-            return isPlaying ? "pause.svg" : "play.svg";
+            return isSearching ? "Try a different search term" : "Go back and record something!";
         }
-        return "play.svg";
+        return "Go back and record something!";
     }
 
 
